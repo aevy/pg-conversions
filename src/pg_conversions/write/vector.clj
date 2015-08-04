@@ -1,5 +1,6 @@
 (ns pg-conversions.write.vector
-  (:require [clojure.java.jdbc :as jdbc]))
+  (:require [clojure.java.jdbc :as jdbc])
+  (:import [org.postgresql.util PGobject]))
 
 (extend-protocol jdbc/ISQLParameter
   clojure.lang.IPersistentVector

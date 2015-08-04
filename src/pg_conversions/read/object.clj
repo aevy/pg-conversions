@@ -1,5 +1,6 @@
 (ns pg-conversions.read.object
-  (:require [clojure.java.jdbc :as jdbc]))
+  (:require [clojure.java.jdbc :as jdbc])
+  (:import [org.postgresql.util PGobject]))
 
 (extend-protocol jdbc/IResultSetReadColumn
   PGobject
