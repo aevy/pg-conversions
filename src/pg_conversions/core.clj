@@ -20,7 +20,6 @@
     (let [conn (.getConnection stmt)
           meta (.getParameterMetaData stmt)
           type-name (.getParameterTypeName meta i)]
-      (println type-name)
       (.setObject stmt i (cond
                           (= type-name "jsonb") (doto (PGobject.)
                                                   (.setType "jsonb")
