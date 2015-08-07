@@ -8,6 +8,11 @@
   (re-find #"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" s))
 
 (extend-protocol jdbc/ISQLValue
+  clojure.lang.IPersistentMap
+  (sql-value [value]
+    (doto (PGobject.)
+      (.setType "jsonb")
+      (.setValue (json/write-str value))))
   java.lang.String
   (sql-value [v]
     (if (uuid? v)
@@ -37,8 +42,8 @@
     (let [type  (.getType pgobj)
           value (.getValue pgobj)]
       (case type
-        "jsonb" (json/read-str value :key-fn keyword)
-        "json" (json/read-str value :key-fn keyword)
+        "jsonb" (json/read-str value)
+        "json" (json/read-str value)
         :else value)))
   java.sql.Timestamp
   (result-set-read-column [pgobj _ _]
