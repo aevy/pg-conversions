@@ -26,11 +26,14 @@
                                                   (.setValue (json/write-str v))))))))
 
 (extend-protocol jdbc/IResultSetReadColumn
+  java.util.UUID
+  (result-set-read-column [pgobj _ _]
+    (str pgobj))
   org.postgresql.jdbc4.Jdbc4Array
-  (result-set-read-column  [pgobj metadata i]
+  (result-set-read-column  [pgobj _ _]
     (vec (.getArray pgobj)))
   PGobject
-  (result-set-read-column [pgobj metadata idx]
+  (result-set-read-column [pgobj _ _]
     (let [type  (.getType pgobj)
           value (.getValue pgobj)]
       (case type
@@ -38,5 +41,5 @@
         "json" (json/read-str value :key-fn keyword)
         :else value)))
   java.sql.Timestamp
-  (result-set-read-column [pgobj metadata idx]
+  (result-set-read-column [pgobj _ _]
     (from-sql-time pgobj)))
