@@ -28,7 +28,11 @@
       (.setObject stmt i (cond
                           (= type-name "jsonb") (doto (PGobject.)
                                                   (.setType "jsonb")
-                                                  (.setValue (json/write-str v))))))))
+                                                  (.setValue (json/write-str v)))
+                          :else
+                          (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
+                            (.createArrayOf conn elem-type (to-array v))
+                            v))))))
 
 (extend-protocol jdbc/IResultSetReadColumn
   java.util.UUID
