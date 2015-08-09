@@ -46,8 +46,8 @@
     (let [type  (.getType pgobj)
           value (.getValue pgobj)]
       (case type
-        "jsonb" (json/read-str value)
-        "json" (json/read-str value)
+        "jsonb" (json/read-str value :key-fn keyword)
+        "json" (json/read-str value :key-fn keyword)
         :else value)))
   java.sql.Timestamp
   (result-set-read-column [pgobj _ _]
