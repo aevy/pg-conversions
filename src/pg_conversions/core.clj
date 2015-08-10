@@ -1,7 +1,7 @@
 (ns pg-conversions.core
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.data.json :as json]
-            [clj-time.coerce :refer [from-sql-time]])
+            [clj-time.coerce :refer [from-sql-time to-string]])
   (:import [org.postgresql.util PGobject]))
 
 (defn uuid? [s]
@@ -51,4 +51,4 @@
         :else value)))
   java.sql.Timestamp
   (result-set-read-column [pgobj _ _]
-    (from-sql-time pgobj)))
+    (to-string (from-sql-time pgobj))))
