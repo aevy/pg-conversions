@@ -10,8 +10,6 @@
 (extend-protocol jdbc/ISQLValue
   java.util.Date
   (sql-value [value]
-    (prn "oeuoehnuthaoeuntoheuntaoehusntoehuntoehusntoheauntoheausnhoeauntaoehunstaoehuntsosh")
-    (prn (to-sql-time (from-date value)))
     (to-sql-time (from-date value)))
   clojure.lang.IPersistentMap
   (sql-value [value]
