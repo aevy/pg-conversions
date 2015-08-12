@@ -1,13 +1,18 @@
 (ns pg-conversions.core
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.data.json :as json]
-            [clj-time.coerce :refer [from-sql-time to-string]])
+            [clj-time.coerce :refer [to-sql-time from-date from-sql-time to-string]])
   (:import [org.postgresql.util PGobject]))
 
 (defn uuid? [s]
   (re-find #"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" s))
 
 (extend-protocol jdbc/ISQLValue
+  java.util.Date
+  (sql-value [value]
+    (prn "oeuoehnuthaoeuntoheuntaoehusntoehuntoehusntoheauntoheausnhoeauntaoehunstaoehuntsosh")
+    (prn (to-sql-time (from-date value)))
+    (to-sql-time (from-date value)))
   clojure.lang.IPersistentMap
   (sql-value [value]
     (doto (PGobject.)
