@@ -34,7 +34,10 @@
                                                   (.setValue (json/write-str v)))
                           :else
                           (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
-                            (.createArrayOf conn elem-type (to-array v))
+                            (do
+                             (.createArrayOf conn elem-type (to-array (if (= elem-type "jsonb")
+                                                                        (map json/write-str v)
+                                                                        v))))
                             v))))))
 
 (extend-protocol jdbc/IResultSetReadColumn
