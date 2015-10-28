@@ -4,9 +4,6 @@
             [clj-time.coerce :refer [to-sql-time from-date from-sql-time to-string]])
   (:import [org.postgresql.util PGobject]))
 
-(defn uuid? [s]
-  (re-find #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" s))
-
 (extend-protocol jdbc/ISQLValue
   java.util.Date
   (sql-value [value]
@@ -15,12 +12,7 @@
   (sql-value [value]
     (doto (PGobject.)
       (.setType "jsonb")
-      (.setValue (json/write-str value))))
-  java.lang.String
-  (sql-value [v]
-    (if (uuid? v)
-      (java.util.UUID/fromString v)
-      v)))
+      (.setValue (json/write-str value)))))
 
 (extend-protocol jdbc/ISQLParameter
   clojure.lang.IPersistentVector
