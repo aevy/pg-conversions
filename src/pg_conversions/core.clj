@@ -2,7 +2,14 @@
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.data.json :as json]
             [clj-time.coerce :refer [to-sql-time from-date from-sql-time to-string]])
-  (:import [org.postgresql.util PGobject]))
+  (:import [org.postgresql.util PGobject]
+           [java.io PrintWriter]))
+
+(defn write-uuid [uuid #^PrintWriter out]
+  (json/-write (. uuid toString) out))
+
+(extend java.util.UUID json/JSONWriter
+  {:-write write-uuid})
 
 (extend-protocol jdbc/ISQLValue
   java.util.Date
