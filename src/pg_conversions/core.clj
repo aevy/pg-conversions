@@ -18,7 +18,7 @@
   clojure.lang.IPersistentMap
   (sql-value [value]
     (doto (PGobject.)
-      (.setType "jsonb")
+      (.setType "json")
       (.setValue (json/write-str value)))))
 
 (extend-protocol jdbc/ISQLParameter
@@ -31,10 +31,13 @@
                           (= type-name "jsonb") (doto (PGobject.)
                                                   (.setType "jsonb")
                                                   (.setValue (json/write-str v)))
+                          (= type-name "json") (doto (PGobject.)
+                                                 (.setType "json")
+                                                 (.setValue (json/write-str v)))
                           :else
                           (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
                             (do
-                             (.createArrayOf conn elem-type (to-array (if (= elem-type "jsonb")
+                             (.createArrayOf conn elem-type (to-array (if (get #{"jsonb" "json"} elem-type)
                                                                         (map json/write-str v)
                                                                         v))))
                             v))))))
