@@ -5,11 +5,28 @@
   (:import [org.postgresql.util PGobject]
            [java.io PrintWriter]))
 
+(defn get-or-set-type [table column ^java.sql.PreparedStatement stmt ^long i]
+  (if-let [type (get-in @db-schema [table column])]
+    type
+    (let [meta (.getMetaData stmt)
+          table-name (.getTableName meta i)
+          type-name (.getColumnTypeName meta i)]
+      (swap! db-schema assoc-in [table column]))))
+
 (defn write-uuid [uuid #^PrintWriter out]
   (json/-write (. uuid toString) out))
 
 (extend java.util.UUID json/JSONWriter
   {:-write write-uuid})
+
+(extend-protocol jdbc/ISQLParameter
+  java.lang.String
+  (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
+    (let [param-meta (.getParameterMetaData stmt)
+          param-type-name (.getParameterTypeName param-meta i)]
+      (.setObject stmt i (if (= param-type-name "uuid")
+                           (java.util.UUID/fromString v)
+                           v)))))
 
 (extend-protocol jdbc/ISQLValue
   java.util.Date

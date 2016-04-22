@@ -1,4 +1,4 @@
-(defproject pg-conversions "0.1.17"
+(defproject pg-conversions "0.1.20"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
