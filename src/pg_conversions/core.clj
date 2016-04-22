@@ -1,7 +1,9 @@
 (ns pg-conversions.core
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.data.json :as json]
-            [clj-time.coerce :refer [to-sql-time from-date from-sql-time to-string]])
+            [clojure.string :as string]
+            [clj-time.format :as f]
+            [clj-time.coerce :refer [to-date to-sql-time from-date from-sql-time to-string]])
   (:import [org.postgresql.util PGobject]
            [java.io PrintWriter]))
 
@@ -11,13 +13,21 @@
 (extend java.util.UUID json/JSONWriter
   {:-write write-uuid})
 
+(defn parse-timestamp [s]
+  (when s
+    (to-sql-time
+     (f/parse
+      (f/formatters :date-hour-minute-second-ms)
+      (string/replace s #"Z$" "")))))
+
 (extend-protocol jdbc/ISQLParameter
   java.lang.String
   (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
     (let [param-meta (.getParameterMetaData stmt)
           param-type-name (.getParameterTypeName param-meta i)]
-      (.setObject stmt i (if (= param-type-name "uuid")
-                           (java.util.UUID/fromString v)
+      (.setObject stmt i (case param-type-name
+                           "uuid" (java.util.UUID/fromString v)
+                           "timestamp" (parse-timestamp v)
                            v)))))
 
 (extend-protocol jdbc/ISQLValue
