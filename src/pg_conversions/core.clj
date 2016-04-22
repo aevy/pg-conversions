@@ -5,14 +5,6 @@
   (:import [org.postgresql.util PGobject]
            [java.io PrintWriter]))
 
-(defn get-or-set-type [table column ^java.sql.PreparedStatement stmt ^long i]
-  (if-let [type (get-in @db-schema [table column])]
-    type
-    (let [meta (.getMetaData stmt)
-          table-name (.getTableName meta i)
-          type-name (.getColumnTypeName meta i)]
-      (swap! db-schema assoc-in [table column]))))
-
 (defn write-uuid [uuid #^PrintWriter out]
   (json/-write (. uuid toString) out))
 
