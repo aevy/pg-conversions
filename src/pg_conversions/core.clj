@@ -20,15 +20,15 @@
       (f/formatters :date-hour-minute-second-ms)
       (string/replace s #"Z$" "")))))
 
-(extend-protocol jdbc/ISQLParameter
-  java.lang.String
-  (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
-    (let [param-meta (.getParameterMetaData stmt)
-          param-type-name (.getParameterTypeName param-meta i)]
-      (.setObject stmt i (case param-type-name
-                           "uuid" (java.util.UUID/fromString v)
-                           "timestamp" (parse-timestamp v)
-                           v)))))
+;(extend-protocol jdbc/ISQLParameter
+;  java.lang.String
+;  (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
+;    (let [param-meta (time (.getParameterMetaData stmt))
+;          param-type-name (time (.getParameterTypeName param-meta i))]
+;      (.setObject stmt i (case param-type-name
+;                           "uuid" (java.util.UUID/fromString v)
+;                           "timestamp" (parse-timestamp v)
+;                           v)))))
 
 (extend-protocol jdbc/ISQLValue
   java.util.Date
