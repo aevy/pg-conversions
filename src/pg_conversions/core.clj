@@ -75,7 +75,7 @@
       (case type
         "jsonb" (json/read-str value :key-fn keyword)
         "json" (json/read-str value :key-fn keyword)
-        :else value)))
+        value)))
   java.sql.Timestamp
   (result-set-read-column [pgobj _ _]
     (to-string (from-sql-time pgobj))))
